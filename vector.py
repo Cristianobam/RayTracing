@@ -1,5 +1,4 @@
 from numbers import Number
-import numpy as np
 
 class Vec3D:
     def __init__(self, x, y, z):
@@ -13,10 +12,10 @@ class Vec3D:
     
     @property
     def norm(self):
-        return np.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+        return (self.x * self.x + self.y * self.y + self.z * self.z)**.5
     
     def __mul__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x = other * self.x
             y = other * self.y
             z = other * self.z
@@ -36,7 +35,7 @@ class Vec3D:
         return self.__mul__(other)
     
     def __matmul__(self, other):
-        if isinstance(other, (list, tuple, np.ndarray, Vec3D)):
+        if isinstance(other, (list, tuple, Vec3D)):
             assert len(other) == 3, "The array length is freater than 3"
             return self.x * other[0] + self.y * other[1] + self.z * other[2]
 
@@ -44,7 +43,7 @@ class Vec3D:
             NotImplemented
             
     def __add__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x = other + self.x
             y = other + self.y
             z = other + self.z
@@ -64,7 +63,7 @@ class Vec3D:
         return self.__add__(other)
     
     def __sub__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x = self.x - other
             y = self.y - other
             z = self.z - other
@@ -81,7 +80,7 @@ class Vec3D:
             NotImplemented
         
     def __rsub__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x = other - self.x
             y = other - self.y
             z = other - self.z
@@ -89,16 +88,16 @@ class Vec3D:
         
         elif isinstance(other, (list, tuple, Vec3D)):
             assert len(other) == 3, "The array length is freater than 3"
-            x = other - self.x
-            y = other - self.y
-            z = other - self.z
+            x = other[0] - self.x
+            y = other[1] - self.y
+            z = other[2] - self.z
             return Vec3D(x, y, z)
         
         else:
             NotImplemented
         
     def __truediv__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x =  self.x / other
             y =  self.y / other
             z =  self.z / other
@@ -115,7 +114,7 @@ class Vec3D:
             NotImplemented
             
     def __rtruediv__(self, other):
-        if isinstance(other, (Number, np.number)):
+        if isinstance(other, Number):
             x =  other / self.x
             y =  other / self.y
             z =  other / self.z
@@ -144,6 +143,9 @@ class Ray:
     def __init__(self, origin:Vec3D, direction:Vec3D):
         self.origin = origin
         self.dir = direction.unit()
+        
+    def at(self, t):
+        return self.origin + t * self.dir
         
 class RGB(Vec3D):
     def __init__(self, x, y, z):

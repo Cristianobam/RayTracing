@@ -17,8 +17,25 @@ focallength = Vec3D(0, 0, 1)
 origin = Vec3D(0, 0, 0)
 lowerleft = origin - horizontal/2 - vertical/2 - focallength
 
+# Objetcs
+s1 = Sphere(Vec3D(0,0,-1), 0.5)
+
+def hitSphere(sphere:Sphere, ray:Ray):
+    oc = ray.origin - sphere.origin
+    a = ray.dir @ ray.dir
+    b = 2 * (oc @ ray.dir)
+    c = (oc @ oc) - sphere.r * sphere.r
+    delta = b*b - 4*a*c
+    if delta < 0:
+        return -1
+    else:
+        return (-b - delta**.5)/(2*a)
 # Color Function
-def raycolor(ray:Ray):
+def raycolor(sphere:Sphere, ray:Ray):
+    t = hitSphere(sphere, ray)
+    if t > 0:
+        N = (ray.at(t) - Vec3D(0,0,-1)).unit()
+        return .5 * RGB(N.x+1, N.y+1, N.z+1)
     t = 0.5 * (ray.dir.y + 1)
     return (1-t) * RGB(1, 1, 1) + t * RGB(0.5, 0.7, 1)
 
@@ -29,7 +46,8 @@ for i in tqdm(range(imwidth)):
         v = 1 - (j - 1) / (imheight - 1)
         dir = lowerleft + u*horizontal + v*vertical - origin
         ray = Ray(origin, dir)
-        for n, color in enumerate(raycolor(ray)):
+        bla = raycolor(s1, ray)
+        for n, color in enumerate(bla):
             image[j][i][n] = color
         
-save('rendered/fig2.png', image)
+save('rendered/fig4.png', image)
